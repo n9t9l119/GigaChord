@@ -5,21 +5,31 @@
 Программное обеспечение создается в рамках курса по программной инженерии университета ИТМО.
 
 ## Запуск кода
+
 ### Запуск локально
+
 1. Перейти в директорию проекта. Установить зависимости.
+
 ```
 pip install -r app/requirements.txt   
 ```
+
 2. Запустить веб-сервер.
+
 ```
 uvicorn app.main:app --reload
 ```
+
 ### Запуск в Docker
+
 1. Перейти в директорию проекта. Собрать Docker образ.
+
 ```
 docker build -t <image_name> .
 ```
+
 2. Запустить Docker контейнер.
+
 ```
 docker run -p 8000:8000 <image_name>
 ```
@@ -33,3 +43,6 @@ docker run -p 8000:8000 <image_name>
 5. Запустить линтер
 6. Отправить изменения в удаленный репозиторий <mark> обязательно в свою ветку
 7. Создать pull request в develop
+
+Разработка ведется согласно
+принципам [магистральной разработки](https://www.atlassian.com/ru/continuous-delivery/continuous-integration/trunk-based-development)
