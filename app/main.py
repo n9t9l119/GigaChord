@@ -101,9 +101,8 @@ def get_key(notes):
     return i.get('on')
 
 
-@app.get("/song")
-async def get_song():
-    data = request.get_json()
+@app.post("/song")
+async def get_song(data: dict):
     mid = mido.MidiFile()
     track = mido.MidiTrack()
     mid.tracks.append(track)
@@ -120,12 +119,12 @@ async def get_song():
     return mid_to_json(mid)
 
 @app.post("/chords")
-async def add_chords():
-    data = request.get_json()
+async def add_chords(data: dict):
     mid = mido.MidiFile()
     track = mido.MidiTrack()
     mid.tracks.append(track)
-    
+
+    chord = get_chord_by_emotion(data.get('res').get('emotion'))
     for i in data.get('res').get('notes'):
         if i.get('on'):
             for j in chord[i.get('on')]:
@@ -140,11 +139,10 @@ async def add_chords():
     return mid_to_json(mid)
 
 @app.post("/note2progression")
-async def continue_note_to_progression():
+async def continue_note_to_progression(data: dict):
     chord3_p=[0,5,7,7,0,0,5,7,0,5,0,7,0,5,7,5]
     #blues_p=[0,0,0,0,5,5,0,0,7,5,0,0]
     
-    data = request.get_json()
     mid = mido.MidiFile()
     track = mido.MidiTrack()
     mid.tracks.append(track)
@@ -170,8 +168,7 @@ async def continue_note_to_progression():
     return mid_to_json(mid)
 
 @app.post("/note_circle")
-async def continue_note_with_circle_of_fifths():
-    data = request.get_json()
+async def continue_note_with_circle_of_fifths(data: dict):
     mid = mido.MidiFile()
     track = mido.MidiTrack()
     mid.tracks.append(track)
@@ -200,8 +197,7 @@ async def continue_note_with_circle_of_fifths():
     return mid_to_json(mid)
 
 @app.post("/chords4melody_by_emotion")
-async def add_chords_to_melody():
-    data = request.get_json()
+async def add_chords_to_melody(data: dict):
     mid = mido.MidiFile()
     track = mido.MidiTrack()
     mid.tracks.append(track)
@@ -230,8 +226,7 @@ async def add_chords_to_melody():
     return mid_to_json(mid)
 
 @app.post("/chords4melody_by_circle")
-async def add_chords_to_melody_with_circle_of_fifths():
-    data = request.get_json()
+async def add_chords_to_melody_with_circle_of_fifths(data: dict):
     mid = mido.MidiFile()
     track = mido.MidiTrack()
     mid.tracks.append(track)
