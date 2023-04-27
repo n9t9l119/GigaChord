@@ -6,16 +6,16 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-def mid_to_json(mid):
+def mid_to_json(mid, track_id=0):
     temp=[]
     new_data={'res':{}}
     new_data.get('res')['notes']=[]
-    for i in mid.tracks[0]:
+    for i in mid.tracks[track_id]:
         if i.type=='note_on':
             new_data.get('res')['notes'].append({'on':i.note})
-        elif i.type=='sysex':
+        if i.time:
             new_data.get('res')['notes'].append({'sysex':i.time}) 
-        elif i.type=='note_off':
+        if i.type=='note_off':
             new_data.get('res')['notes'].append({'off':i.note})
     return(new_data)
 
@@ -219,7 +219,7 @@ def add_chords_to_melody_by_emotion(data: dict):
     chord = get_chord_by_emotion(data.get('res').get('emotion'))
 
     for i in range(len(notes_cycle_len)-1):
-        cycle_notes=notes[notes_cycle_len[i]:notes_cycle_len[i+1]]
+        cycle_notes=notes[notes_cycle_len[i]:notes_cycle_len[i+1]+1]
         melody_key = get_key(cycle_notes)
         for k in chord[melody_key]:
             track.append(mido.Message('note_on', note=k-24))
@@ -247,7 +247,7 @@ def add_chords_to_melody_with_circle_of_fifths(data: dict):
     melody_key = get_key(notes)
     
     for i in range(len(notes_cycle_len)-1):
-        cycle_notes = notes[notes_cycle_len[i]:notes_cycle_len[i+1]]
+        cycle_notes = notes[notes_cycle_len[i]:notes_cycle_len[i+1]+1]
         random_chord = random.choice([major[circle_of_fifths[melody_key%12]],
                   major[circle_of_fifths[melody_key%12-1]],
                   major[circle_of_fifths[(melody_key%12+1)%len(circle_of_fifths)]],
