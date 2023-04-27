@@ -63,7 +63,7 @@ def get_chord_by_emotion(emotion):
     if emotion in switch_case:
         return switch_case[emotion]
     else:
-        return major7 
+        return None 
 
 circle_of_fifths=[0]
 for i in range(0, 11):
@@ -196,17 +196,28 @@ async def continue_note_with_circle_of_fifths(data: dict):
     #mid.save('new_circle_progression.mid')
     return mid_to_json(mid)
 
-@app.post("/chords4melody_by_emotion")
+@app.post("/chords4melody")
 async def add_chords_to_melody(data: dict):
+    if (data.get("type") == "circle"):
+        return add_chords_to_melody_with_circle_of_fifths(data)
+    elif (data.get("type") == "emotion"):
+        if get_chord_by_emotion(data.get("res").get("emotion")):
+            return add_chords_to_melody_by_emotion(data)
+        else:
+            return "Emotion undefined"
+    else:
+        return "Type undefined"
+
+def add_chords_to_melody_by_emotion(data: dict):
     mid = mido.MidiFile()
     track = mido.MidiTrack()
     mid.tracks.append(track)
-    
+
     notes = data.get('res').get('notes')
     notes_cycle = get_melody_notes_per_chord(notes)
     notes_cycle_len = get_cycles(notes)
     chord = get_chord_by_emotion(data.get('res').get('emotion'))
-    
+
     for i in range(len(notes_cycle_len)-1):
         cycle_notes=notes[notes_cycle_len[i]:notes_cycle_len[i+1]]
         melody_key = get_key(cycle_notes)
@@ -225,8 +236,7 @@ async def add_chords_to_melody(data: dict):
     #mid.save('new_accompany_melody_progression.mid')
     return mid_to_json(mid)
 
-@app.post("/chords4melody_by_circle")
-async def add_chords_to_melody_with_circle_of_fifths(data: dict):
+def add_chords_to_melody_with_circle_of_fifths(data: dict):
     mid = mido.MidiFile()
     track = mido.MidiTrack()
     mid.tracks.append(track)
